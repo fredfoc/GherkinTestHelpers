@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Consumer",
+        "repositoryURL": "https://github.com/nicklockwood/Consumer.git",
+        "state": {
+          "branch": null,
+          "revision": "23ef6749fe4c29d6c57572ba5e0e20ec2c2de9da",
+          "version": "0.3.5"
+        }
+      },
+      {
+        "package": "Gherkin",
+        "repositoryURL": "https://github.com/fredfoc/SwiftGherkin.git",
+        "state": {
+          "branch": "feature/search_for_steps",
+          "revision": "d3a161ca9cea82e5c3b8641cdf34a69865b302fb",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
