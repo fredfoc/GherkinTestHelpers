@@ -24,6 +24,6 @@ import Gherkin
 ///   - string: the regex to describe the step (we add ^ and $ at the beginning and end of every regex and it is case insensitive)
 ///   - completion: the completion that will be executed at the end of the search with a `Result<SearchResult, SearchError>`
 
-public func Given(_ scenario: Scenario, _ string: String, _ completion: GherkinRegexCompletion) {
+public func Given(_ scenario: Scenario?, _ string: String, _ completion: GherkinRegexCompletion) {
     search(scenario, string, .given, completion)
 }

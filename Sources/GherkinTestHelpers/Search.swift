@@ -46,6 +46,8 @@ public enum SearchError: Error {
     case notFound
     ///the regex is invalid
     case invalidRegex(Error?)
+    ///no scenario
+    case undefinedScenario
 }
 
 public struct SearchResult {
@@ -65,7 +67,11 @@ public typealias GherkinRegexCompletion = (Result<SearchResult, SearchError>) ->
 ///   - text: the regex
 ///   - stepName: the type of step (i.e.: Given, Then, etc.)
 ///   - completion: the completion executed at the end of the search
-func search(_ scenario: Scenario, _ text: String, _ stepName: StepName, _ completion: GherkinRegexCompletion) {
+func search(_ scenario: Scenario?, _ text: String, _ stepName: StepName, _ completion: GherkinRegexCompletion) {
+    guard let scenario = scenario else {
+        completion(.failure(.undefinedScenario))
+        return
+    }
     do {
         guard let step = try scenario.steps(for: text, stepName)?.first else {
             completion(.failure(.notFound))
@@ -76,6 +82,6 @@ func search(_ scenario: Scenario, _ text: String, _ stepName: StepName, _ comple
         completion(.success(SearchResult(matches: match?.ranges?.compactMap { (step.text as NSString).substring(with: $0) },
         step: step)))
     } catch {
-        completion(.failure(SearchError.invalidRegex(error)))
+        completion(.failure(.invalidRegex(error)))
     }
 }
