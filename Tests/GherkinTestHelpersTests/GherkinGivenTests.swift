@@ -1,6 +1,6 @@
 import Consumer
-@testable import GherkinTestHelpers
 import Gherkin
+@testable import GherkinTestHelpers
 import XCTest
 
 class GherkinGivenTests: XCTestCase {
@@ -124,5 +124,33 @@ class GherkinGivenTests: XCTestCase {
             XCTAssertEqual(error, SearchError.invalidRegex(nil))
         }
         wait(for: [expectation], timeout: 10.0)
+    }
+
+    func testGivenMethodShouldFindSpecificStringOrThrow() throws {
+        let expectation = XCTestExpectation(description: "testGivenMethodShouldFindSpecificStringOrThrow")
+        var searchResult: SearchResult?
+        try Given(from: scenario, "I am a given") { tmpResult in
+            searchResult = tmpResult
+            expectation.fulfill()
+        }
+        guard let result = searchResult else {
+            XCTFail("searchResult should not be nil")
+            return
+        }
+        XCTAssertEqual(result.matches?.count, 1)
+        XCTAssertEqual(result.matches?.first, "I am a given")
+        wait(for: [expectation], timeout: 10.0)
+    }
+
+    func testGivenMethodShouldNotFindSpecificStringOrThrow() {
+        XCTAssertThrowsError(try Given(from: scenario, "I am not in the steps") { _ in }) { error in
+            XCTAssertEqual(error as? SearchError, SearchError.notFound)
+        }
+    }
+
+    func testGivenMethodShouldThrowWithNoScenario() {
+        XCTAssertThrowsError(try Given(from: nil, "I am not in the steps") { _ in }) { error in
+            XCTAssertEqual(error as? SearchError, SearchError.undefinedScenario)
+        }
     }
 }

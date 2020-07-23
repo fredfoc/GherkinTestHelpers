@@ -1,6 +1,6 @@
 import Consumer
-@testable import GherkinTestHelpers
 import Gherkin
+@testable import GherkinTestHelpers
 import XCTest
 
 class GherkinWhenTests: XCTestCase {
@@ -60,5 +60,33 @@ class GherkinWhenTests: XCTestCase {
             XCTAssertEqual(error, SearchError.notFound)
         }
         wait(for: [expectation], timeout: 10.0)
+    }
+
+    func testWhenMethodShouldFindSpecificStringOrThrow() throws {
+        let expectation = XCTestExpectation(description: "testWhenMethodShouldFindSpecificStringOrThrow")
+        var searchResult: SearchResult?
+        try When(from: scenario, "I am a when") { tmpResult in
+            searchResult = tmpResult
+            expectation.fulfill()
+        }
+        guard let result = searchResult else {
+            XCTFail("searchResult should not be nil")
+            return
+        }
+        XCTAssertEqual(result.matches?.count, 1)
+        XCTAssertEqual(result.matches?.first, "I am a when")
+        wait(for: [expectation], timeout: 10.0)
+    }
+
+    func testWhenMethodShouldNotFindSpecificStringOrThrow() {
+        XCTAssertThrowsError(try When(from: scenario, "I am not in the steps") { _ in }) { error in
+            XCTAssertEqual(error as? SearchError, SearchError.notFound)
+        }
+    }
+
+    func testThenMethodShouldThrowWithNoScenario() {
+        XCTAssertThrowsError(try When(from: nil, "I am not in the steps") { _ in }) { error in
+            XCTAssertEqual(error as? SearchError, SearchError.undefinedScenario)
+        }
     }
 }

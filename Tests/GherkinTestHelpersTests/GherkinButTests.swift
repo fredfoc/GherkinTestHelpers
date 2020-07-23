@@ -1,6 +1,6 @@
 import Consumer
-@testable import GherkinTestHelpers
 import Gherkin
+@testable import GherkinTestHelpers
 import XCTest
 
 class GherkinButTests: XCTestCase {
@@ -60,5 +60,33 @@ class GherkinButTests: XCTestCase {
             XCTAssertEqual(error, SearchError.notFound)
         }
         wait(for: [expectation], timeout: 10.0)
+    }
+
+    func testButMethodShouldFindSpecificStringOrThrow() throws {
+        let expectation = XCTestExpectation(description: "testButMethodShouldFindSpecificStringOrThrow")
+        var searchResult: SearchResult?
+        try But(from: scenario, "I am a but") { tmpResult in
+            searchResult = tmpResult
+            expectation.fulfill()
+        }
+        guard let result = searchResult else {
+            XCTFail("searchResult should not be nil")
+            return
+        }
+        XCTAssertEqual(result.matches?.count, 1)
+        XCTAssertEqual(result.matches?.first, "I am a but")
+        wait(for: [expectation], timeout: 10.0)
+    }
+
+    func testButMethodShouldNotFindSpecificStringOrThrow() {
+        XCTAssertThrowsError(try But(from: scenario, "I am not in the steps") { _ in }) { error in
+            XCTAssertEqual(error as? SearchError, SearchError.notFound)
+        }
+    }
+
+    func testButMethodShouldThrowWithNoScenario() {
+        XCTAssertThrowsError(try But(from: nil, "I am not in the steps") { _ in }) { error in
+            XCTAssertEqual(error as? SearchError, SearchError.undefinedScenario)
+        }
     }
 }

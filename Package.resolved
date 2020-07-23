@@ -14,9 +14,9 @@
         "package": "Gherkin",
         "repositoryURL": "https://github.com/fredfoc/SwiftGherkin.git",
         "state": {
-          "branch": "feature/search_for_steps",
+          "branch": null,
           "revision": "d3a161ca9cea82e5c3b8641cdf34a69865b302fb",
-          "version": null
+          "version": "0.2.1"
         }
       }
     ]
